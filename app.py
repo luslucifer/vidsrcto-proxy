@@ -2,26 +2,24 @@ from flask import Flask, request
 from flask_cors import CORS
 import requests
 import re
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
-CORS(app)  # This will enable CORS for all routes in your Flask app
+CORS(app, resources={r"/*": {"origins": "*"}}) 
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1)
 
 pattern = r'\/h\/list'
-hostM = 'http://172.232.43.70'
+hostM = 'https://yourdomain.com'
 
 
 @app.route('/')
 def home():
     return 'ehhhh'
 
-
 @app.route('/fetch/')
 def fetch():
     url = request.args.get('url')
-    host = request.host
-    splitedh = host.split(':')
-    port = splitedh[1]
-    host = hostM + ':' + port + '/fetch?url='
+    host = hostM + '/fetch?url='
     if url:
         match_result = bool(re.search(pattern, url))
         url = url.replace(' ', '')
@@ -51,4 +49,4 @@ def fetch():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
