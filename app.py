@@ -1,10 +1,12 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request
 from flask_cors import CORS
 import requests
 import re
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}}) 
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1)
 
 pattern = r'\/h\/list'
 hostM = 'https://v1d5rc-pr0xy.vercel.app'
@@ -13,7 +15,6 @@ hostM = 'https://v1d5rc-pr0xy.vercel.app'
 @app.route('/')
 def home():
     return 'ehhhh'
-
 
 @app.route('/fetch/')
 def fetch():
@@ -42,33 +43,9 @@ def fetch():
             joined = '\n'.join(splited)
             return joined
         else:
-            return jsonify(res.json()), res.status_code  # Return JSON response
+            return res.content
     else:
-        return 'Please specify a URL.'
+        return 'what the fuck specify url pls '
 
-
-# Entry point for Vercel serverless function
-def handler(event, context):
-    if event["method"] == "GET":
-        # Convert query parameters to args
-        args = {}
-        for key, value in event["query"].items():
-            args[key] = value[0]
-
-        # Mock Flask's request object
-        class Request:
-            def __init__(self, args):
-                self.args = args
-
-        req = Request(args)
-        response = fetch(req)
-        return {
-            "statusCode": 200,
-            "body": response.data.decode(),
-            "headers": {
-                "Content-Type": "text/plain",
-            },
-        }
-    else:
-        return {"statusCode": 405, "body": "Method Not Allowed"}
-
+#if __name__ == '__main__':
+#    app.run(debug=True, host='0.0.0.0', port=5000)
