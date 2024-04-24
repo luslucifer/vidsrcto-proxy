@@ -9,7 +9,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1)
 
 pattern = r'\/h\/list'
-hostM = 'https://yourdomain.com'
+hostM = 'https://v1d5rc-pr0xy.vercel.app'
 
 
 @app.route('/')
