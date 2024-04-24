@@ -9,7 +9,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1)
 
 pattern = r'\/h\/list'
-hostM = 'https://v1d5rc-pr0xy.vercel.app'
+hostM = 'https://yourdomain.com'
 
 
 @app.route('/')
@@ -47,5 +47,5 @@ def fetch():
     else:
         return 'what the fuck specify url pls '
 
-#if __name__ == '__main__':
-#    app.run(debug=True, host='0.0.0.0', port=5000)
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)
